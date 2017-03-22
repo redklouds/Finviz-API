@@ -266,7 +266,7 @@ def test():
     for i in x:
         print("%s  %s  %s  %s" % (i['index'],i['price'],i['change'], i['volume']))
         
-no
+
 
     #print("get left column")
     #displayLeftCol()
