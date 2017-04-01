@@ -21,6 +21,7 @@ class FinViz():
         -Postcondition:Object's scraped data is refreshed as of currently called
         """
         self.__reinitalize__()
+    
     def __reinitalize__(self):
         #this gets the objects reinitze with new data
         self._html = BeautifulSoup(requests.get('http://finviz.com/').text,'html5lib')
@@ -41,11 +42,11 @@ class FinViz():
             try:
                 #print(item.getText())
                 #populate the dictionary with respective data
-                result.append(__parseText__(idx.getText()))
-
+                result.append(self.__parseText__(idx.getText()))
+                
             except:
+                #print("ERROR OCCURED %s" % e)
                 pass
-
         return result        
     def getRightColumn(self):
         """ Gets the left column displaying Top gainers, New highes, OverBought, Unusual Volume Upgrades,
@@ -106,7 +107,6 @@ class FinViz():
         searchResult = self._html.findAll('table', {'class':'t-home-table'})
         
         # we just want the first and second matches
-
         return searchResult[column]
 
 
@@ -145,10 +145,8 @@ class FinViz():
                 #print(item.getText())
                 #populate the dictionary with respective data
                 result.append(__parseText__(idx.getText()))
-
             except:
                 pass
-
         return result
 
     def marketStatus():
@@ -161,30 +159,6 @@ class FinViz():
 
         """
 
-
-    def getMainLeftColumn():
-        q = requests.get('http://finviz.com/')
-        #make the soup
-        soup = BeautifulSoup(q.text,'html5lib')
-        #get the left column table element
-        q = soup.find('table',{'class':'t-home-table'})
-        q = q.findChild()
-        p = list(q.children)
-
-        for item in p:
-            try:
-                #print(item.getText())
-                #populate the dictionary with respective data
-                result = __parseText__(item.getText())
-                print("%s %s %s %s %s" %(result['index'],
-                                         result['price'],
-                                         result['change'],
-                                         result['signal'],
-                                         result['volume'])
-                      )
-
-            except:
-                pass
 
     def __parseText__(self, text):
         #resultSet = dict()
@@ -257,23 +231,26 @@ class FinViz():
     
 
 
-
+   
 def test():
     print("testing now")
     testObject = FinViz()
     x = testObject.getRightColumn()
-    print(len(x))
+    y = testObject.getLeftColumn()
+    #print(len(x))
     for i in x:
-        print("%s  %s  %s  %s" % (i['index'],i['price'],i['change'], i['volume']))
+        print("%s  %s  %s  %s %s" % (i['index'],i['price'],i['change'],
+        i['volume'], i['signal']))
         
 
-
+    for i in y:
+        print("%s  %s  %s  %s %s" % (i['index'],i['price'],i['change'],
+        i['volume'], i['signal']))
+    
     #print("get left column")
     #displayLeftCol()
     #print('display rigfht')
     #displayRightCol()
-
-
-test()
-if "__name__" == "__main__":
+    
+if __name__ == "__main__":
     test()
