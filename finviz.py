@@ -1,18 +1,23 @@
 import requests, re
 from bs4 import BeautifulSoup
 
-class FinViz():
+
+class FinViz:
 
     def __init__(self):
+        """
+            
+        """
         #make the request
         request = requests.get('http://finviz.com/')
-        #make the soup
+        #maxe the soup
         soup = BeautifulSoup(request.text,'html5lib')
         #soup has been brewed
         self._html = soup
         #self._html = BeautifulSoup(requests.get('http://finviz.com/').text,'html5lib')
         self._data = list()
-        
+
+
     def refresh(self):
         """
         This Method is called to make another poll to finviz to
@@ -24,21 +29,17 @@ class FinViz():
     
     def __reinitalize__(self):
         #this gets the objects reinitze with new data
-        self._html = BeautifulSoup(requests.get('http://finviz.com/').text,'html5lib')
-    
-    def getLeftColumn(self):
-        """ Gets the left column displaying Top gainers, New highes, OverBought, Unusual Volume Upgrades,
-        Earnings before, and insider buying signals as well as their respective stock indexes 
-        Stock Index
-        Current Price
-        Percent Change
-        Volume
-        Signal"""
-        data = self.__getMainColumnData__(0)
-        data = data.findChild()
-        data = list(data.children)
+
+        r = requests.get('http://finviz.com')
+
+        self._html = BeautifulSoup(r.text)
+
+    def returnColumnData(self, data):
+        
+        ret_data = data.findChild()
+        ret_data = list(ret_data.children)
         result = list()
-        for idx in data:
+        for idx in ret_data:
             try:
                 #print(item.getText())
                 #populate the dictionary with respective data
@@ -47,30 +48,38 @@ class FinViz():
             except:
                 #print("ERROR OCCURED %s" % e)
                 pass
-        return result        
-    def getRightColumn(self):
-        """ Gets the left column displaying Top gainers, New highes, OverBought, Unusual Volume Upgrades,
+        return result  
+    def getLeftColumn(self):
+        """ 
+            Gets the left column displaying Top gainers, New highes, OverBought, Unusual Volume Upgrades,
         Earnings before, and insider buying signals as well as their respective stock indexes 
         Stock Index
         Current Price
         Percent Change
         Volume
-        Signal"""
+        Signal
+        
+        """
+        data = self.__getMainColumnData__(0)
+        a = self.returnColumnData(data)
+        return a
+        
+        
+
+
+    def getRightColumn(self):
+        """ 
+            Gets the left column displaying Top gainers, New highes, OverBought, Unusual Volume Upgrades,
+        Earnings before, and insider buying signals as well as their respective stock indexes 
+        Stock Index
+        Current Price
+        Percent Change
+        Volume
+        Signal
+        """
         data = self.__getMainColumnData__(1)
-        data = data.findChild()
-        data = list(data.children)
-        result = list()
-        for idx in data:
-            try:
-                #print(item.getText())
-                #populate the dictionary with respective data
-                result.append(self.__parseText__(idx.getText()))
-
-            except:
-                pass
-
-        return result        
-   
+        a = self.returnColumnData(data)
+        return a
 
     def __getMainColumnData__(self,column):
         """
@@ -110,46 +119,8 @@ class FinViz():
         return searchResult[column]
 
 
-    def getRightColData():
-        """
-        Postcondition:
-            Returns a Object of type Dictionary
-            with price, index, volume and signal respectivly
-        """
-        data = getMainColumnData(1)
-        data = data.findChild()
-        data = list(data.children)
-        result = list()
-        for idx in data:
-            try:
-
-                #populate the dictionary with respective data
-                result = __parseText__(idx.getText())
-                #need exection for stringObject
-
-            except:
-                pass
-        return result
-    def getLeftColData():
-        """
-        Postcondition:
-            Returns a Object of type Dictionary
-            with price, index, volume and signal respectivly
-        """
-        data = getMainColumnData(0)
-        data = data.findChild()
-        data = list(data.children)
-        result = list()
-        for idx in data:
-            try:
-                #print(item.getText())
-                #populate the dictionary with respective data
-                result.append(__parseText__(idx.getText()))
-            except:
-                pass
-        return result
     def getTopVolume(self):
-        r =
+        r =\
         requests.get('http://finviz.com/screener.ashx?v=141&f=sec_healthcare&o=-volume')
         s = BeautifulSoup(r.text,'html5lib')
 
@@ -160,7 +131,6 @@ class FinViz():
         
     def marketStatus():
         """
-
         This Method check wether the market is up or down.
         Precondition: None
         Postcondition: Returns String 'Up' or 'Down' for the current requested
