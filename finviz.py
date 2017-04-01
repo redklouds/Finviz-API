@@ -148,7 +148,16 @@ class FinViz():
             except:
                 pass
         return result
+    def getTopVolume(self):
+        r =
+        requests.get('http://finviz.com/screener.ashx?v=141&f=sec_healthcare&o=-volume')
+        s = BeautifulSoup(r.text,'html5lib')
 
+        a = s.find('table',{'bgcolor':'#d3d3d3'})
+
+        result = a.find_all('tr')
+
+        
     def marketStatus():
         """
 
@@ -158,7 +167,7 @@ class FinViz():
         time.
 
         """
-
+        print('hello')      
 
     def __parseText__(self, text):
         #resultSet = dict()
@@ -183,53 +192,11 @@ class FinViz():
                      'price':listDigit[0],
                      'change':listDigit[1],
                      'volume':listDigit[2],
-                     'signal':listText[1]}
+                     'signal':listText[1]
+                     }
         ##return the resulting dictionary
         return resultSet
     
-    #Testing functions
-    def displayRightCol():
-        #returns a tag element object
-        data = getMainColumnData(1)
-        data = data.findChild()
-        data = list(data.children)
-
-        for idx in data:
-            try:
-                #print(item.getText())
-                #populate the dictionary with respective data
-                result = __parseText__(idx.getText())
-                print("%s %s %s %s %s" %(result['index'],
-                                         result['price'],
-                                         result['change'],
-                                         result['signal'],
-                                         result['volume'])
-                      )
-
-            except:
-                pass
-    def displayLeftCol():
-        #returns a tag element object
-        data = getMainColumnData(0)
-        data = data.findChild()
-        data = list(data.children)
-
-        for idx in data:
-            try:
-                #print(item.getText())
-                #populate the dictionary with respective data
-                result = __parseText__(idx.getText())
-                print("%s %s %s %s %s" %(result['index'],
-                                         result['price'],
-                                         result['change'],
-                                         result['signal'],
-                                         result['volume'])
-                      )
-
-            except:
-                pass
-    
-
 
    
 def test():
@@ -242,7 +209,6 @@ def test():
         print("%s  %s  %s  %s %s" % (i['index'],i['price'],i['change'],
         i['volume'], i['signal']))
         
-
     for i in y:
         print("%s  %s  %s  %s %s" % (i['index'],i['price'],i['change'],
         i['volume'], i['signal']))
