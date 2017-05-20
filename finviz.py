@@ -1,12 +1,43 @@
 import requests, re
 from bs4 import BeautifulSoup
 
-
+##############################################################
+# File Name: finviz.pu
+# Author: Danny Ly | RedKlouds
+# Created: 3/20/2017
+##############################################################
+#
+#   Description: This is a program used
+#   to get the data from the website finfiz.com
+#   PRECONDITIONS:
+#       -> Call to the object's methods
+#           ->getLeftColumn, which has daily trends of
+#               ->Top Gainers | New High | Overbought
+#               | Unusual Volumn | Upgrades | Earnings Before
+#               | Insider Buying
+#           ->getRigthColumn, which has a daily red of:
+#               -> Top Losers | New Low | Oversold |
+#               Most Volatile | Most Active | Downgrades
+#               | Earnings After | Insider Selling
+#        -> USEAGE:
+#            -> calling getTrends(), returns a dictionary with 
+#              {'left_column','right_column'} data trends 
+#   POSTCONDITIONS:
+#       -> Returns a dicitonary with the above mentioned keys
+#   ASSUMPTIONS:
+#       -> Requests has been updated and installed
+#       -> BeautifulSoup4 has been installed
+#
+##############################################################
 class FinViz:
 
     def __init__(self):
         """
-            
+        Function Name: Default Constructor
+        PRECONDITIONS: None
+        POSTCONDITIONS: 
+            ->Initializes the object data at the current time
+        ASSUMPTIONS: None
         """
         #make the request
         request = requests.get('http://finviz.com/')
@@ -20,132 +51,59 @@ class FinViz:
 
     def refresh(self):
         """
-        This Method is called to make another poll to finviz to
-        update the current objects data, also called (reinitalize)
-        -Precondition: None
-        -Postcondition:Object's scraped data is refreshed as of currently called
-        """
+            Function Name: refresh
+            Descriptions:
+                -> Polls the webservice for new/updated data
+            PRECONDITIONS: None
+            POSTCONDITIONS: 
+                -> Object reinitialized with new data
+            ASSUMPTIONS: None
+        """        
         self.__reinitalize__()
     
-    def __reinitalize__(self):
-        #this gets the objects reinitze with new data
-
+    def _reinitialize(self):
+        """
+            Function Name: (Helper) _reinitialize 
+            Description:
+                -> calls another get requsests to poll refreshed data manually
+            PRECONDITIONS: None
+            POSTCONDITIONS: 
+                -> Refreshes data
+            ASSUMPTIONS: None
+        """        
         r = requests.get('http://finviz.com')
-
         self._html = BeautifulSoup(r.text)
 
-    def returnColumnData(self, data):
-        
+    def _parseColumnData(self, data):
+        """
+            Function Name: 
+            PRECONDITIONS:
+            POSTCONDITIONS:
+            ASSUMPTIONS:
+        """        
         ret_data = data.findChild()
         ret_data = list(ret_data.children)
         result = list()
         for idx in ret_data:
             try:
-                #print(item.getText())
-                #populate the dictionary with respective data
-                result.append(self.__parseText__(idx.getText()))
-                
+                #parse the given data, into 
+                result.append(self._parseText(idx.getText()))                
             except:
-                #print("ERROR OCCURED %s" % e)
+                #None Type, scrapping None Object, skip.
                 pass
         return result  
-    def getLeftColumn(self):
-        """ 
-            Gets the left column displaying Top gainers, New highes, OverBought, Unusual Volume Upgrades,
-        Earnings before, and insider buying signals as well as their respective stock indexes 
-        Stock Index
-        Current Price
-        Percent Change
-        Volume
-        Signal
-        
+
+    def _parseText(self, text):
         """
-        data = self.__getMainColumnData__(0)
-        a = self.returnColumnData(data)
-        return a
-        
-        
-
-
-    def getRightColumn(self):
-        """ 
-            Gets the left column displaying Top gainers, New highes, OverBought, Unusual Volume Upgrades,
-        Earnings before, and insider buying signals as well as their respective stock indexes 
-        Stock Index
-        Current Price
-        Percent Change
-        Volume
-        Signal
-        """
-        data = self.__getMainColumnData__(1)
-        a = self.returnColumnData(data)
-        return a
-
-    def __getMainColumnData__(self,column):
-        """
-        Parameters : Takes Left or Right
-            Left will be 0 right will be 1
-
-        This methid get's the two main left and right columns
-        from finviz.com, the columns shown on the left are:
-        Top Gainers
-        New high
-        Overbought
-        Unusual Volume
-        Upgrades
-        Earnings Before
-
-        The column on the right are
-        Top Losers
-        New Low
-        Oversold
-        Most Volitile
-        Most Active
-        Downgrades
-        Earnings After
-        Insider Selling
-        """
-        #make the https requests
-        #req = requests.get('http://finviz.com/')
-        #brew the soup >:)
-        #soup  = BeautifulSoup(req.text,'html5lib')
-        #find the repsective elements we are looking for
-        #this will return a result set object for docs: look at website
-        #returns all matching elements
-        #searchResult = soup.findAll('table',{'class':'t-home-table'})
-        searchResult = self._html.findAll('table', {'class':'t-home-table'})
-        
-        # we just want the first and second matches
-        return searchResult[column]
-
-
-    def getTopVolume(self):
-        r =\
-        requests.get('http://finviz.com/screener.ashx?v=141&f=sec_healthcare&o=-volume')
-        s = BeautifulSoup(r.text,'html5lib')
-
-        a = s.find('table',{'bgcolor':'#d3d3d3'})
-
-        result = a.find_all('tr')
-
-        
-    def marketStatus():
-        """
-        This Method check wether the market is up or down.
-        Precondition: None
-        Postcondition: Returns String 'Up' or 'Down' for the current requested
-        time.
-
-        """
-        print('hello')      
-
-    def __parseText__(self, text):
-        #resultSet = dict()
-        #idx = text[:4]
+            Function Name: 
+            PRECONDITIONS:
+            POSTCONDITIONS:
+            ASSUMPTIONS:
+        """        
         #use regex for faster parsing of text, searching
         #for numbers and words, better and faster.
 
-        ##define regEx pattern
+        #define regEx pattern
         #"find all alpha upper and lower words
         #+ one and unlimited timees
         #match words who may or may not have spcaes betweent hem and
@@ -158,35 +116,127 @@ class FinViz:
         #regExDigit = '(\d+.\d{1,2})'
         listText = re.findall(regExText, text)
         listDigit = re.findall(regExDigit, text)
-        resultSet = {'index':listText[0],
+        resultSet = {
+                     'index':listText[0],
                      'price':listDigit[0],
                      'change':listDigit[1],
                      'volume':listDigit[2],
                      'signal':listText[1]
                      }
-        ##return the resulting dictionary
+        #return the resulting dictionary
         return resultSet
     
+    def getLeftColumn(self):
+        """
+            Function Name: getLeftColumn
+            Description:
+                -> get get's the raw data in the left column of the website
+            PRECONDITIONS: None
+            POSTCONDITIONS:
+                ->returns a dictionary containing all the parsed data
+                -> in the form:
+                    Stock Index
+                    Current Price
+                    Percent Change
+                    Volume
+                    Signal
+            ASSUMPTIONS: None
+        """        
+        data = self._getMainColumnData(0)
+        a = self._parseColumnData(data)
+        return a
+        
+    def getRightColumn(self):
+        """
+            Function Name: getLeftColumn
+            Description:
+                -> get get's the raw data in the right column of the website
+            PRECONDITIONS: None
+            POSTCONDITIONS:
+                ->returns a dictionary containing all the parsed data
+                -> in the form:
+                    Earnings before
+                    Stock Index
+                    Current Price
+                    Percent Change
+                    Volume Signal
+            ASSUMPTIONS: None
+        """  
+        data = self._getMainColumnData(1)
+        a = self._parseColumnData(data)
+        return a
+
+    def _getMainColumnData(self,column):
+        """
+            Function Name: _getMainColumnData
+            Description:
+               -> our switch helper function depending on which 
+               parameter we get, this function returns the respective data set
+               pertaining to that column
+               
+            PRECONDITIONS: Integer 1 or 0( left will be 0, 1 will be right)
+            POSTCONDITIONS:
+                Left:
+                Top Gainers
+                New high
+                Overbought
+                Unusual Volume
+                Upgrades
+                Earnings Before
+        
+                The column on the right are:
+                Top Losers
+                New Low
+                Oversold
+                Most Volitile
+                Most Active
+                Downgrades
+                Earnings After
+                Insider Selling
+            ASSUMPTIONS: None
+        """        
+        #scrape the specific elements
+        searchResult = self._html.findAll('table', {'class':'t-home-table'})
+        
+        # we just want the first or second matches
+        return searchResult[column]
+        
+    def marketStatus():
+        """
+            TODO: get Market status |Positive|Negative
+            Function Name: 
+            PRECONDITIONS:
+            POSTCONDITIONS:
+            ASSUMPTIONS:
+        """        
+        
+    def getTrends(self):
+        left_col = self.getLeftColumn()
+        right_col = self.getRightColumn()
+        return_dict = {"right_column": right_col, "left_column":left_col}
+        return return_dict
+
 
    
 def test():
     print("testing now")
     testObject = FinViz()
-    x = testObject.getRightColumn()
-    y = testObject.getLeftColumn()
+
+    data = testObject.getTrends()
     #print(len(x))
-    for i in x:
+    print("showing right column")
+    for i in data['right_column']:
+     
         print("%s  %s  %s  %s %s" % (i['index'],i['price'],i['change'],
         i['volume'], i['signal']))
         
-    for i in y:
+    print("Showing left column")
+    for i in data['left_column']:
+        
         print("%s  %s  %s  %s %s" % (i['index'],i['price'],i['change'],
         i['volume'], i['signal']))
     
-    #print("get left column")
-    #displayLeftCol()
-    #print('display rigfht')
-    #displayRightCol()
+
     
 if __name__ == "__main__":
     test()
