@@ -213,8 +213,17 @@ class FinViz:
     def getTrends(self):
         left_col = self.getLeftColumn()
         right_col = self.getRightColumn()
-        return_dict = {"right_column": right_col, "left_column":left_col}
-        return return_dict
+        
+        combined_dict = list()
+  
+        for i in left_col:
+            combined_dict.append(i)
+        for i in right_col:
+            combined_dict.append(i)
+            
+        #print(combined_dict)
+        #return_dict = {"right_column": right_col, "left_column":left_col}
+        return combined_dict
 
 
    
@@ -223,20 +232,9 @@ def test():
     testObject = FinViz()
 
     data = testObject.getTrends()
-    #print(len(x))
-    print("showing right column")
-    for i in data['right_column']:
-     
-        print("%s  %s  %s  %s %s" % (i['index'],i['price'],i['change'],
-        i['volume'], i['signal']))
-        
-    print("Showing left column")
-    for i in data['left_column']:
-        
-        print("%s  %s  %s  %s %s" % (i['index'],i['price'],i['change'],
-        i['volume'], i['signal']))
+    for i in data:
+        print(i)
     
 
-    
 if __name__ == "__main__":
     test()
