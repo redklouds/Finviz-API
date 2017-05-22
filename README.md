@@ -13,16 +13,16 @@ Trending Tickers | Polls for the current trending stocks
  
  finviz_trending = finviz_Object.getTrends()
  
- right_c = finviz_trending['right_column']
- left_c = finviz_trending['left_column']
 ```
 after execution above returns a Dictionary of the trending stocks
 here are the keys you can access
  ```
-     for i in finviz_trending['right_column']:
-     
-        print("%s  %s  %s  %s %s" % (i['index'],i['price'],i['change'],
-        i['volume'], i['signal']))
+     #look at he first element in out trending data
+     data = finviz_trending[0]
+     #{'index': 'QHC', 'change': '38.19', 'signal': 'Top Gainers', 'volume': '3593933', 'price': '3.98'}
+     #get the signal
+     data['signal']
+     # Top Gainers
  ```
  Output
  ```
